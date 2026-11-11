@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hotel-app
+  namespace: production
+  labels:
+    app: hotel-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hotel-app
+  template:
+    metadata:
+      labels:
+        app: hotel-app
+    spec:
+      containers:
+        - name: hotel-app
+          image: hotel-app:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: hotel-secrets
+                  key: db_host
+            - name: DB_REPLICA_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: hotel-secrets
+                  key: db_replica_host
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: hotel-secrets
+                  key: redis_host
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: hotel-secrets
+                  key: db_user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hotel-secrets
+                  key: db_password
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: hotel-secrets
+                  key: db_name
+            - name: PORT
+              value: "3000"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
