@@ -16,7 +16,7 @@ jobs:
           role-to-assume: arn:aws:iam::858823300180:role/GitHubActionsDeployRole
           aws-region: eu-west-1
       - name: Login to ECR
-        run: aws ecr get-login-password --region eu-west-1 | docker login --username aws --password-stdin 858823300180.dkr.ecr.eu-west-1.amazonaws.com
+        run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 858823300180.dkr.ecr.eu-west-1.amazonaws.com
       - name: Build and Push
         run: docker build -t 858823300180.dkr.ecr.eu-west-1.amazonaws.com/hotel-app:latest ./app && docker push 858823300180.dkr.ecr.eu-west-1.amazonaws.com/hotel-app:latest
       - name: Update kubeconfig
